@@ -22,7 +22,7 @@ client.on('ready', () => {
 
 client.on('interactionCreate', interaction => {
     //console.log(interaction);
-    //nothi
+    //not
 });
 
 client.on('messageCreate', message => {
