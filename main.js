@@ -25,6 +25,10 @@ client.on('interactionCreate', interaction => {
     //no
 });
 
+client.on('voiceStateUpdate', (oldMember, newMember) => {
+    client.commands.empty.execute(oldMember, newMember, client.user.id, client.commands);
+});
+
 client.on('messageCreate', message => {
     if (!message.content.startsWith(PREFIX) || message.author.bot) return;
 

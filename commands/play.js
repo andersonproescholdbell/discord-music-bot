@@ -7,7 +7,10 @@ const queue = new Map();
 module.exports = {
     name: 'play',
     async execute(message, command, args) {
+        if (command === 'empty') return leave(message);
+
         const voiceChannel = message.member.voice.channel;
+        console.log('hello');
         if (!voiceChannel) return message.reply('You need to be in a voice channel');
 
         if (command === 'leave') leave(message);
@@ -57,14 +60,19 @@ module.exports = {
 }
 
 const leave = (message) => {
-    const connection = getVoiceConnection(message.guild.id);
-    if (connection) {
-        queue.delete(message.guild.id);
-        connection.disconnect();
-        return message.react('👋');
-    } else {
-        return message.reply('Not currently in a voice channel');
-    }
+    try {
+        const connection = getVoiceConnection(message.guild.id);
+        if (connection) {
+            queue.delete(message.guild.id);
+            connection.disconnect();
+            return message.react('👋');
+        } else {
+            return message.reply('Not currently in a voice channel');
+        }
+    } catch(err) {
+        queue.delete(message);
+        getVoiceConnection(message).disconnect();
+    }    
 }
 
 const skipSong = (message, serverQueue) => {
@@ -112,4 +120,7 @@ const songPlayer = async (guild, song) => {
             songPlayer(guild, songQueue.songs[0]);
         }
     });
+    // player.once(AudioPlayerStatus.Idle, () => {
+    //     console.log('done');
+    // });
 };
