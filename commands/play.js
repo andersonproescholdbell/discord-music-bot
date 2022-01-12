@@ -105,6 +105,7 @@ const songPlayer = async (guild, song) => {
 
     const stream = ytdl(song.url, {filter: 'audioonly'});
     const resource = createAudioResource(stream);
+    resource.volume.setVolume(0.1);
     const player = createAudioPlayer();
 
     const connection = getVoiceConnection(guild.id);
