@@ -10,7 +10,6 @@ module.exports = {
         if (command === 'empty') return leave(message);
 
         const voiceChannel = message.member.voice.channel;
-        console.log('hello');
         if (!voiceChannel) return message.reply('You need to be in a voice channel');
 
         if (command === 'leave') leave(message);
@@ -104,8 +103,8 @@ const songPlayer = async (guild, song) => {
     }
 
     const stream = ytdl(song.url, {filter: 'audioonly'});
-    const resource = createAudioResource(stream);
-    resource.volume.setVolume(0.1);
+    const resource = createAudioResource(stream, { inlineVolume: true });
+    resource.volume.setVolume(0.6);
     const player = createAudioPlayer();
 
     const connection = getVoiceConnection(guild.id);
