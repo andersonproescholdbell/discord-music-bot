@@ -9,6 +9,9 @@
   },
   "author": "",
   "license": "ISC",
+  "engines": {
+    "node": "16.x"
+  },
   "dependencies": {
     "@discordjs/voice": "^0.7.5",
     "discord.js": "^13.5.1",
