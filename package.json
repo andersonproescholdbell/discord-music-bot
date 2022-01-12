@@ -4,7 +4,8 @@
   "description": "",
   "main": "main.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node main.js"
   },
   "author": "",
   "license": "ISC",
@@ -14,7 +15,6 @@
     "dotenv": "^10.0.0",
     "ffmpeg-static": "^4.4.1",
     "libsodium-wrappers": "^0.7.9",
-    "youtube-dl-exec": "^2.0.2",
     "yt-search": "^2.10.3",
     "ytdl-core": "^4.10.0"
   }
