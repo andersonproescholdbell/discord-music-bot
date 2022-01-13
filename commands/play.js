@@ -15,13 +15,16 @@ module.exports = {
         if (command === 'leave') leave(message);
         else if (command === 'skip') skipSong(message, queue.get(message.guild.id));
 
-
         if (command === 'play') {
             if (!args.length) return message.reply('You need to send a search query after !play');
 
             let serverQueue = queue.get(message.guild.id);
 
-            const song = await getSong(args.join(' '));
+            let queryVolume = getQueryVolume(args);
+
+            console.log(queryVolume);
+            const song = await getSong(queryVolume.sq);
+            
             if (!song) {
                 message.reply('No video found');
                 return;
@@ -35,7 +38,7 @@ module.exports = {
                 };
 
                 queue.set(message.guild.id, queueConstructor); 
-                queueConstructor.songs.push(song);
+                queueConstructor.songs.push( {'song':song, 'volume':queryVolume.v} );
 
                 try {
                     const connection = await joinVoiceChannel({
@@ -51,11 +54,29 @@ module.exports = {
                     throw err;
                 }
             } else {
-                serverQueue.songs.push(song);
+                serverQueue.songs.push( {'song':song, 'volume':queryVolume.v} );
                 message.channel.send(`:fire: ***${song.title}*** has been added to the queue, song ${serverQueue.songs.length} in the queue`);
             }
         }
     }
+}
+
+const getQueryVolume = (args) => {
+    let volume, searchQuery;
+    if (args[args.length-2] !== 'volume') {
+        volume = 1;
+        searchQuery = args.join(' ');
+    } else {
+        try {
+            volume = parseFloat(args.pop());
+            args.pop();
+            searchQuery = args.join(' ');  
+        } catch(err) {
+            volume = 1;
+            searchQuery = args.join(' ');
+        }
+    }
+    return {'v':volume, 'sq':searchQuery};
 }
 
 const leave = (message) => {
@@ -79,7 +100,7 @@ const skipSong = (message, serverQueue) => {
     if (serverQueue.songs.length === 1) return leave(message);
     
     serverQueue.songs.shift();
-    songPlayer(message.guild, serverQueue.songs[0]);
+    songPlayer(message.guild, serverQueue.songs[0].song);
 }
 
 const getSong = async (search) => {
@@ -102,9 +123,9 @@ const songPlayer = async (guild, song) => {
         return;
     }
 
-    const stream = ytdl(song.url, {filter: 'audioonly'});
+    const stream = ytdl(song.song.url, {filter: 'audioonly'});
     const resource = createAudioResource(stream, { inlineVolume: true });
-    resource.volume.setVolume(0.6);
+    resource.volume.setVolume(song.volume);
     const player = createAudioPlayer();
 
     const connection = getVoiceConnection(guild.id);
@@ -117,9 +138,10 @@ const songPlayer = async (guild, song) => {
     player.addListener('stateChange', (prev, next) => {
         if (next.status === 'idle') {
             songQueue.songs.shift();
-            songPlayer(guild, songQueue.songs[0]);
+            songPlayer(guild, songQueue.songs[0].song);
         }
     });
+
     // player.once(AudioPlayerStatus.Idle, () => {
     //     console.log('done');
     // });
