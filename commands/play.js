@@ -133,7 +133,7 @@ const songPlayer = async (guild, song) => {
 
     await player.play(resource);
 
-    await songQueue.message.channel.send(`:fire: Now Playing ***${song.title}***, song 1 of ${songQueue.songs.length}`);
+    await songQueue.message.channel.send(`:fire: Now Playing ***${song.song.title}***, song 1 of ${songQueue.songs.length}`);
 
     player.addListener('stateChange', (prev, next) => {
         if (next.status === 'idle') {
