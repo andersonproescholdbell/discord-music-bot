@@ -137,7 +137,12 @@ const songPlayer = async (guild, song) => {
     player.addListener('stateChange', (prev, next) => {
         if (next.status === 'idle') {
             songQueue.songs.shift();
-            songPlayer(guild, songQueue.songs[0]);
+            try {
+                songPlayer(guild, songQueue.songs[0]);
+            } catch(err) {
+                leave(guild.id);
+            }
+            
         }
     });
 
