@@ -22,7 +22,6 @@ module.exports = {
 
             let queryVolume = getQueryVolume(args);
 
-            console.log(queryVolume);
             const song = await getSong(queryVolume.sq);
             
             if (!song) {
@@ -100,7 +99,7 @@ const skipSong = (message, serverQueue) => {
     if (serverQueue.songs.length === 1) return leave(message);
     
     serverQueue.songs.shift();
-    songPlayer(message.guild, serverQueue.songs[0].song);
+    songPlayer(message.guild, serverQueue.songs[0]);
 }
 
 const getSong = async (search) => {
